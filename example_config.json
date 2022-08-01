@@ -1,0 +1,5 @@
+{
+  "secret_key": "S****",
+  "assets_to_convert": ["FIDR", "SDEXEX"],
+  "target_asset": "USDC"
+}
