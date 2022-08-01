@@ -5,8 +5,10 @@ name = "pypi"
 
 [packages]
 stellar-sdk = "*"
+requests = "*"
 
 [dev-packages]
+isort = "*"
 
 [requires]
 python_version = "3.9"

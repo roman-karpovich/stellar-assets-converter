@@ -1,5 +1,6 @@
 {
   "secret_key": "S****",
+  "extra_signers": ["S****"],
   "assets_to_convert": ["FIDR", "SDEXEX"],
   "target_asset": "USDC"
 }
