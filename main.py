@@ -95,7 +95,7 @@ def main(secret_key: str, extra_signers: list[str], assets_to_convert: list, tar
     transaction_builder = TransactionBuilder(
         source_account=account,
         network_passphrase=Network.PUBLIC_NETWORK_PASSPHRASE,
-        base_fee=100,
+        base_fee=1000,
     ).set_timeout(300)
 
     operations_exists = False
@@ -114,12 +114,12 @@ def main(secret_key: str, extra_signers: list[str], assets_to_convert: list, tar
         path_str = ' -> '.join([balance.asset.code] + [a.code for a in path] + [dest_asset.code])
         print(f'path: {path_str}')
 
-        transaction_builder.append_path_payment_strict_receive_op(
+        transaction_builder.append_path_payment_strict_send_op(
             destination=account.universal_account_id,
             send_asset=balance.asset,
-            send_max=balance.balance,
+            send_amount=balance.balance,
             dest_asset=dest_asset,
-            dest_amount=dest_amount,
+            dest_min=dest_amount,
             path=path,
         )
         operations_exists = True
