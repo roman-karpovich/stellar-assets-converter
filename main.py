@@ -1,9 +1,13 @@
+import argparse
 import json
+import subprocess
+import sys
 from dataclasses import dataclass
 from decimal import Decimal
 from typing import Iterable, Tuple
 
 import requests
+import yaml
 from stellar_sdk import (Account, Asset, Keypair, Network, Server,
                          TransactionBuilder, TransactionEnvelope)
 
@@ -135,6 +139,16 @@ def main(secret_key: str, extra_signers: list[str], assets_to_convert: list, tar
 
 
 if __name__ == '__main__':
-    with open('config.json', 'r') as config_file:
-        config = json.loads(config_file.read())
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--sops', action='store_true', required=False, help='use sops to decrypt config file')
+
+    args = parser.parse_args(sys.argv[1:])
+
+    if args.sops:
+        content = subprocess.check_output(["sops", "--decrypt", "config.json"])
+        config = yaml.safe_load(content.decode().replace('\t', '  '))
+    else:
+        with open('config.json', 'r') as config_file:
+            config = json.loads(config_file.read())
+
     main(config['secret_key'], config['extra_signers'], config['assets_to_convert'], config['target_asset'])

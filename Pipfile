@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 stellar-sdk = "*"
 requests = "*"
+pyyaml = "*"
 
 [dev-packages]
 isort = "*"
