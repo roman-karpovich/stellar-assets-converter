@@ -103,6 +103,7 @@ def main(secret_key: str, extra_signers: list[str], assets_to_convert: list, tar
     ).set_timeout(300)
 
     operations_exists = False
+    total_amount_collected = 0
 
     for balance in balances:
         if balance.asset.code not in assets_to_convert:
@@ -110,9 +111,11 @@ def main(secret_key: str, extra_signers: list[str], assets_to_convert: list, tar
 
         print(balance.asset.code, balance.asset.issuer, balance.balance)
         path, dest_amount = get_path(server, balance.asset, dest_asset, balance.balance)
-        if not path:
+        if path is None:
             print(f'unable to find path for {balance.balance} of {balance.asset.code}')
             continue
+
+        dest_amount = round(dest_amount * Decimal('0.99'), 7)
 
         print(f'converting {balance.balance} of {balance.asset.code} into {dest_amount} of {dest_asset.code}')
         path_str = ' -> '.join([balance.asset.code] + [a.code for a in path] + [dest_asset.code])
@@ -126,11 +129,14 @@ def main(secret_key: str, extra_signers: list[str], assets_to_convert: list, tar
             dest_min=dest_amount,
             path=path,
         )
+        total_amount_collected += dest_amount
         operations_exists = True
 
     if not operations_exists:
         print('No operations to add. stopping')
         return
+
+    print(f'{total_amount_collected} of {dest_asset.code} to be collected in total')
 
     signatures = [Keypair.from_secret(key) for key in [secret_key] + extra_signers]
     transaction = transaction_builder.build()
